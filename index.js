@@ -348,7 +348,7 @@ module.exports = function(config){
     Object.keys(em.logs).forEach(function(file) {
       var data = em.logs[file];
       var last = +data.rotateName.substr(data.rotateName.lastIndexOf('.')+1, data.rotateName.length);
-      var cutoff = last - config.maxFiles - 1;
+      var cutoff = last - config.maxFiles;
       var basefname = path.basename(file)+'.';
       fs.readdir(path.dirname(file), function(err, data) {
         if (err) return;
