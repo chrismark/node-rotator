@@ -356,7 +356,7 @@ module.exports = function(config){
         data.forEach(function(f) {
           if (f.indexOf(basefname) == 0) {
             var id = +f.substr(f.lastIndexOf('.')+1, f.length);
-            if (id <= cutoff) {
+            if (id < cutoff) {
               fs.unlink(f);
             }
           }
