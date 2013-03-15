@@ -287,10 +287,8 @@ module.exports = function(config){
       data.forEach(function(f){
 
         if(~f.indexOf(base)){
-
-          match = true;
-
-          var last = +(f.substr(f.lastIndexOf('.')+1, f.length).replace(/[^\d]+/g,''));
+          match = true;        
+          var last = +(f.replace(base, '').replace('.', '')); // extract 1 from test.log.1
           if(last && last >= id) id = last;
         }
       });
