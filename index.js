@@ -20,6 +20,9 @@ module.exports = function(config){
   // how often to update size.
   config.statInterval = config.statInterval||65000;
 
+  // delete old rotated files
+  config.maxFiles = config.maxFiles||0;
+  
   // default to gzipping output files.
   if(typeof config.gzip == 'undefined') config.gzip = true;
 
@@ -338,6 +341,29 @@ module.exports = function(config){
     });
   };
 
+  em.removeOld = function() {
+    // if not set return
+    if (config.maxFiles <= 0) return;
+  
+    Object.keys(em.logs).forEach(function(file) {
+      var data = em.logs[file];
+      var last = +data.rotateName.substr(data.rotateName.lastIndexOf('.')+1, data.rotateName.length);
+      var cutoff = last - config.maxFiles - 1;
+      var basefname = path.basename(file)+'.';
+      fs.readdir(path.dirname(file), function(err, data) {
+        if (err) return;
+  
+        data.forEach(function(f) {
+          if (f.indexOf(basefname) == 0) {
+            var id = +f.substr(f.lastIndexOf('.')+1, f.length);
+            if (id <= cutoff) {
+              fs.unlink(f);
+            }
+          }
+        });
+      });
+    });
+  };
 
   em.updateStats = function(cb){
     var pending = 0;
@@ -400,6 +426,7 @@ module.exports = function(config){
     try{
       em.rotate();
       em.cleanUp();
+      em.removeOld();
     } catch(e) {
       console.error('log rotator error ',e);
     }
