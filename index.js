@@ -284,13 +284,11 @@ module.exports = function(config){
       }
 
       var id = 0;
-      var timestring = em.formatTime(new Date());
       data.forEach(function(f){
 
-        if(~f.indexOf(base) && ~f.indexOf(timestring)){
+        if(~f.indexOf(base)){
 
           match = true;
-          f = f.replace(timestring,'');
 
           var last = +(f.substr(0,f.indexOf('_')).replace(/[^\d]+/g,''));
           if(last && last >= id) id = last;
