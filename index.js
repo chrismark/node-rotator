@@ -270,7 +270,7 @@ module.exports = function(config){
 
     this.getRotateId(p,function(err,id) {
       if(err) return cb(err);
-      var toRotate = path.join(dir,(id?id+'_':'')+name);
+      var toRotate = path.join(dir,name+(id?'.'+id:''));
       cb(null,toRotate);
     }); 
   };
@@ -290,7 +290,7 @@ module.exports = function(config){
 
           match = true;
 
-          var last = +(f.substr(0,f.indexOf('_')).replace(/[^\d]+/g,''));
+          var last = +(f.substr(f.lastIndexOf('.')+1, f.length).replace(/[^\d]+/g,''));
           if(last && last >= id) id = last;
         }
       });
