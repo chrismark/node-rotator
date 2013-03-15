@@ -270,7 +270,7 @@ module.exports = function(config){
 
     this.getRotateId(p,function(err,id) {
       if(err) return cb(err);
-      var toRotate = path.join(dir,em.formatTime(new Date())+(id?'-'+id:'')+'_'+name);
+      var toRotate = path.join(dir,(id?id+'_':'')+name);
       cb(null,toRotate);
     }); 
   };
