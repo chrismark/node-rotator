@@ -409,7 +409,7 @@ module.exports = function(config){
   };
 
   em._copyAndRecreate = function(p,cb) {
-    var tmp = p+'_'+Date.now()+''+Math.random();
+    var tmp = p+'_'+Date.now()+''+Math.random()+'.tmp';
     fs.rename(p,tmp,function(err) {
       if(err) return cb(err);
       // make a new file at path.
