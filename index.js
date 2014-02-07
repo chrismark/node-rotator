@@ -2,6 +2,7 @@ var EventEmitter = require('events').EventEmitter
 ,fs = require('fs')
 ,path = require('path')
 ,zlib = require('zlib')
+,cron = require('cron')
 ;
 
 
@@ -22,6 +23,9 @@ module.exports = function(config){
 
   // delete old rotated files
   config.maxFiles = config.maxFiles||0;
+
+  // use cron to schedule rotation
+  config.useCron = config.useCron||false;
   
   // default to gzipping output files.
   if(typeof config.gzip == 'undefined') config.gzip = true;
@@ -91,7 +95,8 @@ module.exports = function(config){
 
   em.stop = function(cb){
 
-    em.clearIntervals();
+    if (config.useCron) cronJob.stop();
+    else em.clearIntervals();
     em.stopped = true;
 
     if(em.rotating) {
@@ -422,16 +427,36 @@ module.exports = function(config){
   //
   // ttl rotation
   //
-  em.intervals.push(setInterval(function(){
-    try{
-      em.rotate();
-      em.cleanUp();
-      em.removeOld();
-    } catch(e) {
-      console.error('log rotator error ',e);
-    }
-  },config.pollInterval));
+  if (config.useCron) {
+    cronJob = new (cron.CronJob)(
+      config.useCron, 
+      function() { // onTick
+        try{
+          em.rotate();
+          em.cleanUp();
+          em.removeOld();
+        } catch(e) {
+          console.error('log rotator error ',e);
+        }
+      },
+      null, // onStopped callback
+      0 // initial trigger
+    );
 
+    cronJob.start();
+  }
+  else {
+    em.intervals.push(setInterval(function(){
+      try{
+        em.rotate();
+        em.cleanUp();
+        em.removeOld();
+      } catch(e) {
+        console.error('log rotator error ',e);
+      }
+    },config.pollInterval));
+  }
+  
   //
   // stat size rotation.
   //
