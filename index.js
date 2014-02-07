@@ -355,6 +355,7 @@ module.exports = function(config){
       var last = +data.rotateName.substr(data.rotateName.lastIndexOf('.')+1, data.rotateName.length);
       var cutoff = last - config.maxFiles;
       var basefname = path.basename(file)+'.';
+      var basedir = path.dirname(file);
       fs.readdir(path.dirname(file), function(err, data) {
         if (err) return;
   
@@ -362,7 +363,7 @@ module.exports = function(config){
           if (f.indexOf(basefname) == 0) {
             var id = +f.substr(f.lastIndexOf('.')+1, f.length);
             if (id < cutoff) {
-              fs.unlink(f);
+              fs.unlink(basedir+'/'+f);
             }
           }
         });
