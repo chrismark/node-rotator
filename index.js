@@ -167,7 +167,7 @@ module.exports = function(config){
       , age = Date.now()-ctime.valueOf()
       ;
 
-      if(config.useCron && age < config.interval && size < config.size) {
+      if(config.useCron == false && age < config.interval && size < config.size) {
         return;
       }
 
